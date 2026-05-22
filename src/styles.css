@@ -607,6 +607,14 @@ input, select, textarea {
   max-width: 720px;
 }
 
+/* Centered 3-up tile grid (used by CloudPicker) */
+.tile-grid.tile-grid-center {
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  max-width: 840px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .tile-grid.compact-2x2 {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   max-width: 1180px;
@@ -614,7 +622,7 @@ input, select, textarea {
 }
 
 @media (min-width: 1200px) {
-  .tile-grid:not(.compact) {
+  .tile-grid:not(.compact):not(.tile-grid-center) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

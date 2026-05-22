@@ -1152,7 +1152,7 @@ function CloudPicker({ onPick }) {
           The form gates cloud-specific fields based on this. You can restart at any time by
           clicking the title.
         </p>
-        <div className="tile-grid" style={{ marginTop: 24 }}>
+        <div className="tile-grid tile-grid-center" style={{ marginTop: 24 }}>
           {Object.values(CLOUDS).map((c) => (
             <button key={c.id} className="tile" onClick={() => onPick(c.id)}>
               <div className="tile-icon"><Icon name="cloud" size={28} /></div>
