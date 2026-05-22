@@ -1347,7 +1347,7 @@ function SectionCard({ section, state, onChange, sectionRef }) {
 /* ───────── INTAKE FORM ───────── */
 
 function IntakeForm({ state, setState, onGenerate, onBack }) {
-  const refs = useRef({});
+  const [activeSectionId, setActiveSectionId] = useState(INTAKE_SECTIONS[0].id);
   const onChange = (sectionId, fieldId, value) => {
     setState((prev) => ({
       ...prev,
@@ -1358,10 +1358,15 @@ function IntakeForm({ state, setState, onGenerate, onBack }) {
     }));
   };
 
-  const scrollTo = (id) => {
-    const el = refs.current[id];
-    if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  const selectSection = (id) => {
+    setActiveSectionId(id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const activeIdx = Math.max(0, INTAKE_SECTIONS.findIndex((s) => s.id === activeSectionId));
+  const activeSection = INTAKE_SECTIONS[activeIdx];
+  const prevSection = INTAKE_SECTIONS[activeIdx - 1];
+  const nextSection = INTAKE_SECTIONS[activeIdx + 1];
 
   return (
     <div className="app-body">
@@ -1373,9 +1378,15 @@ function IntakeForm({ state, setState, onGenerate, onBack }) {
           {INTAKE_SECTIONS.map((s) => {
             const touched = isSectionTouched(s, state);
             const complete = isSectionComplete(s, state);
-            const cls = `nav-step ${complete ? "done" : ""} ${touched && !complete ? "active" : ""}`.trim();
+            const current = s.id === activeSectionId;
+            const cls = [
+              "nav-step",
+              complete && "done",
+              current && "active",
+              touched && !complete && !current && "touched",
+            ].filter(Boolean).join(" ");
             return (
-              <button key={s.id} className={cls} onClick={() => scrollTo(s.id)}>
+              <button key={s.id} className={cls} onClick={() => selectSection(s.id)}>
                 <span className="nav-step-num">
                   {complete ? <Icon name="check" size={12} strokeWidth={2.5} /> : <Icon name={s.icon} size={12} />}
                 </span>
@@ -1390,27 +1401,41 @@ function IntakeForm({ state, setState, onGenerate, onBack }) {
         </nav>
       </aside>
       <main className="app-main">
-        <div className="step-eyebrow">Step 2</div>
+        <div className="step-eyebrow">
+          Step 2 · Section {activeIdx + 1} of {INTAKE_SECTIONS.length}
+        </div>
         <h1 className="step-title">Customer environment intake</h1>
         <p className="step-desc">
-          Fill what the customer knows; mark the rest unknown. Scroll through every section or
-          jump from the sidebar. Hit Generate when ready.
+          Fill what the customer knows; mark the rest unknown. Use the sidebar to jump between
+          sections, or step through with Previous / Next. Hit Generate when ready.
         </p>
         <div className="sections-stack">
-          {INTAKE_SECTIONS.map((section) => (
-            <SectionCard
-              key={section.id}
-              section={section}
-              state={state}
-              onChange={onChange}
-              sectionRef={(el) => { refs.current[section.id] = el; }}
-            />
-          ))}
+          <SectionCard
+            key={activeSection.id}
+            section={activeSection}
+            state={state}
+            onChange={onChange}
+          />
         </div>
         <div className="form-footer">
-          <button className="btn btn-primary btn-lg" onClick={onGenerate}>
-            Generate report <Icon name="arrowRight" />
-          </button>
+          <div className="form-footer-left">
+            {prevSection && (
+              <button className="btn btn-ghost" onClick={() => selectSection(prevSection.id)}>
+                ← {prevSection.label}
+              </button>
+            )}
+          </div>
+          <div className="form-footer-right">
+            {nextSection ? (
+              <button className="btn btn-primary" onClick={() => selectSection(nextSection.id)}>
+                Next: {nextSection.label} <Icon name="arrowRight" />
+              </button>
+            ) : (
+              <button className="btn btn-primary btn-lg" onClick={onGenerate}>
+                Generate report <Icon name="arrowRight" />
+              </button>
+            )}
+          </div>
         </div>
       </main>
     </div>

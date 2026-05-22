@@ -1562,10 +1562,28 @@ input, select, textarea {
 }
 .form-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   padding: 16px 0 40px;
   border-top: 1px solid var(--border-subtle);
   margin-top: 20px;
+}
+.form-footer-left,
+.form-footer-right {
+  display: flex;
+  gap: 8px;
+}
+.form-footer-left:empty,
+.form-footer-right:empty { display: none; }
+
+/* Sidebar: soft "touched but not currently viewing" indicator */
+.nav-step.touched {
+  color: var(--text-secondary);
+}
+.nav-step.touched .nav-step-num {
+  border-color: var(--prio-high);
+  color: var(--prio-high);
 }
 
 /* Section body compact for results page */
